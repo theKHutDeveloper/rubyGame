@@ -38,8 +38,8 @@ class GameWindow < Gosu::Window
 
 
   def update
-    @player.update
-    @player.blocked_object(@crate)
+    @player.update(0, WORLD_SIZE_X)
+
 
     if self.button_down? Gosu::KbLeft
       @player.move_left
@@ -47,9 +47,22 @@ class GameWindow < Gosu::Window
       @player.move_right
     end
 
+
     if self.button_down? Gosu::KbUp
       @player.jump_up
     end
+
+    if self.button_down? Gosu::KbX
+        @player.push_object(@crate)
+    elsif self.button_down? Gosu::KbZ
+      @player.push_object(@crate)
+    end
+
+
+      @crate.update
+
+
+    @player.blocked_object(@crate)
 
     @camera_x = @player.player_pos_x - WIDTH / 2
 

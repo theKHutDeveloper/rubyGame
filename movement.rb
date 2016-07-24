@@ -14,8 +14,16 @@ class Movement
     @pos_x
   end
 
+  def set_x(value)
+    @pos_x = value
+  end
+
   def get_y
     @pos_y
+    end
+
+  def set_y(value)
+    @pos_y = value
   end
 
   def get_velocity_y
@@ -46,7 +54,6 @@ class Movement
 
   def up(jump_velocity)
     @velocity_y = -jump_velocity
-    @jumping = true
   end
 
   def update(ground)

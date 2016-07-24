@@ -67,7 +67,7 @@ class Player
   end
 
 
-  def update
+  def update(x1, x2)
     @moving = false
     @jumping = false
 
@@ -75,7 +75,12 @@ class Player
     @player_action[1].update
     @player_action[2].update
 
-    @player_moves.get_x
+    if @player_moves.get_x > (x2 - PLAYER_WIDTH)
+      @player_moves.set_x(x2 - PLAYER_WIDTH)
+    elsif @player_moves.get_x < x1
+      @player_moves.set_x(x1)
+    end
+
     #handle jumping
     @player_moves.update(GROUND)
     @player_y = @player_moves.get_y
@@ -99,8 +104,18 @@ class Player
   end
 
 
+  def push_object(object)
+    if @blocked[:right]
+      object.push_sprite(25)
+    elsif @blocked[:left]
+      object.push_sprite(-25)
+    end
+  end
+
   def blocked_object(object1)
-    if @player_moves.get_x  + PLAYER_WIDTH >= object1.get_x && @player_moves.get_x <= object1.get_x + object1.get_width &&
+    offset_x1 = (PLAYER_WIDTH * 0.7)
+    offset_x2 = (PLAYER_WIDTH * 0.3)
+    if @player_moves.get_x  + offset_x1 >= object1.get_x && @player_moves.get_x <= object1.get_x + object1.get_width - offset_x2 &&
         @player_y >= object1.get_y - object1.get_height && @player_y <= object1.get_y
 
       if @direction == :right
@@ -112,26 +127,33 @@ class Player
       @blocked[:down] = true
       @blocked[:up] = true
 
-    elsif @player_x  + PLAYER_WIDTH >= object1.get_x && @player_x <= object1.get_x + object1.get_width &&
-          @player_y < object1.get_y - object1.get_height || @player_y > object1.get_y
+    elsif @player_x  + offset_x1 >= object1.get_x && @player_x  <= object1.get_x + object1.get_width - offset_x2 &&
+          @player_y >= object1.get_y - object1.get_height - 20 && !@jumping
 
-      if (object1.get_y - object1.get_height) - @player_y < 20
-        @player_y = object1.get_y - object1.get_height - 1
+        @player_y = @player_moves.set_y(object1.get_y - object1.get_height - 1)
         @player_moves.set_velocity_y(0)
         @blocked[:left] = false
         @blocked[:right] = false
         @blocked[:down] = true
-      end
 
+    elsif @player_x + offset_x1 >= object1.get_x && @player_x  <= object1.get_x + object1.get_width - offset_x2 &&
+        @player_y < object1.get_y - object1.get_height - 20 || @player_y > object1.get_y
+      @player_moves.update(GROUND)
+      @player_y = @player_moves.get_y
+      @blocked[:left] = false
+      @blocked[:right] = false
+      @blocked[:down] = true
     else
       @blocked[:left] = false
       @blocked[:right] = false
       @blocked[:down] = false
       @blocked[:up] = false
 
+
       if @player_y < GROUND
         @player_moves.set_velocity_y_in_air
       end
+
     end
   end
 end
