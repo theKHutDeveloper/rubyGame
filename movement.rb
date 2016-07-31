@@ -56,6 +56,10 @@ class Movement
     @velocity_y = -jump_velocity
   end
 
+  def down(jump_velocity)
+    @velocity_y = jump_velocity
+  end
+
   def update(ground)
     if @velocity_y != 0
 

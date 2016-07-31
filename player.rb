@@ -4,8 +4,8 @@ require_relative 'movement.rb'
 class Player
 
   GRAVITY = 100
-  X_GRAVITY = 20
-  JUMP_VELOCITY = 100
+  X_GRAVITY = 10
+  JUMP_VELOCITY = 200
   PLAYER_WIDTH = 57
   PLAYER_HEIGHT = 100
   GROUND = 440
@@ -21,6 +21,7 @@ class Player
     @direction = :right
     @moving = false
     @jumping = false
+    @on_platform = false
 
     @blocked = {:right => false, :left => false, :up => false, :down => false}
     @player_action = [
@@ -67,6 +68,10 @@ class Player
   end
 
 
+  def set_up
+    @player_y = @player_moves.set_y(@player_y - 21)
+  end
+
   def update(x1, x2)
     @moving = false
     @jumping = false
@@ -104,6 +109,11 @@ class Player
   end
 
 
+  def on_ground?
+    true if @player_y == GROUND
+  end
+
+
   def push_object(object)
     if @blocked[:right]
       object.push_sprite(25)
@@ -111,6 +121,62 @@ class Player
       object.push_sprite(-25)
     end
   end
+
+
+  def player_on_platform(object)
+    true if @player_y == object.get_y - object.get_height - 1
+  end
+
+
+
+
+  def player_on_array_platform(object)
+
+    for i in 0...object.length
+      if @player_y  == object[i].get_y - PLAYER_HEIGHT && @player_x >= object[i].get_x &&
+          @player_x <= object[i].get_x + object[i].get_width
+        return true
+      end
+    end
+  end
+
+
+
+  def on_platform(object)
+    offset_x1 = (PLAYER_WIDTH * 0.7)
+    offset_x2 = (PLAYER_WIDTH * 0.3)
+    if @player_moves.get_x  + offset_x1 >= object.get_x && @player_moves.get_x <= object.get_x + object.get_width - offset_x2 &&
+        @player_y >= object.get_y - PLAYER_HEIGHT && @player_y <= object.get_y - (PLAYER_HEIGHT/ 2)
+
+      @player_y = @player_moves.set_y(object.get_y - PLAYER_HEIGHT)
+      @blocked[:up] = true
+      @blocked[:down] = true
+      @player_moves.set_velocity_y(0)
+
+      elsif @player_moves.get_x  + offset_x1 >= object.get_x && @player_moves.get_x <= object.get_x + object.get_width - offset_x2 &&
+          @player_y >= 100 && @player_y <= 179
+        @blocked[:up] = false
+        @blocked[:down] = true
+    end
+  end
+
+  #next step is to block jump if user is jumping and knocks their head on platform
+
+  def platform_blocked(object)
+
+    if @player_x >= object.get_x && @player_x <= object.get_x + object.get_width &&
+      @player_y >= object.get_y + (object.get_height/2) && @player_y <= object.get_y + (object.get_height)
+
+      puts "#{@player_x}"
+      puts "#{object.get_x}"
+      puts "#{object.get_x + object.get_width}"
+      puts "#{@player_y}"
+      puts "#{object.get_y + + (object.get_height/2)}"
+      puts "#{object.get_y + object.get_height}"
+      @player_moves.down(JUMP_VELOCITY)
+    end
+  end
+
 
   def blocked_object(object1)
     offset_x1 = (PLAYER_WIDTH * 0.7)
@@ -128,7 +194,7 @@ class Player
       @blocked[:up] = true
 
     elsif @player_x  + offset_x1 >= object1.get_x && @player_x  <= object1.get_x + object1.get_width - offset_x2 &&
-          @player_y >= object1.get_y - object1.get_height - 20 && !@jumping
+          @player_y >= object1.get_y - object1.get_height - 5 && !@jumping
 
         @player_y = @player_moves.set_y(object1.get_y - object1.get_height - 1)
         @player_moves.set_velocity_y(0)
@@ -137,12 +203,16 @@ class Player
         @blocked[:down] = true
 
     elsif @player_x + offset_x1 >= object1.get_x && @player_x  <= object1.get_x + object1.get_width - offset_x2 &&
-        @player_y < object1.get_y - object1.get_height - 20 || @player_y > object1.get_y
-      @player_moves.update(GROUND)
+        (@player_y < object1.get_y - object1.get_height - 5  && @player_y > object1.get_y - PLAYER_HEIGHT) || @player_y > object1.get_y
+
       @player_y = @player_moves.get_y
+
       @blocked[:left] = false
       @blocked[:right] = false
       @blocked[:down] = true
+
+      #when does LA LA 3 get called?
+      puts 'LA LA 3'
     else
       @blocked[:left] = false
       @blocked[:right] = false
