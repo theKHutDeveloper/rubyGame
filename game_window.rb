@@ -2,6 +2,7 @@ require 'gosu'
 require_relative 'background.rb'
 require_relative 'player.rb'
 require_relative 'sprite.rb'
+require_relative 'enemy.rb'
 
 WIDTH = 800
 HEIGHT = 640
@@ -24,8 +25,10 @@ class GameWindow < Gosu::Window
 
     @player = Player.new(self, 200)
 
+    @king_kong = Enemy.new(self, 560, -18)
+
     @crate = Sprite.new(self, 'assets/Crate.png')
-    @crate.set_position(700, 440)
+    @crate.set_position(300, 440) #(700, 440)
 
     @platform = Array.new(28)
 
@@ -34,7 +37,7 @@ class GameWindow < Gosu::Window
     end
 
     start = 100
-    start_y = 100
+    start_y = 120
     for i in 0...@platform.length
       @platform[i].set_position(start, start_y)
       if i == 3 || i == 6 || i == 8 || i == 16 || i == 25
@@ -77,7 +80,7 @@ class GameWindow < Gosu::Window
       elsif @player.player_on_platform(@crate)
         @player.set_up
         @player.jump_up
-      elsif @player.player_on_array_platform(@platform) == true
+      elsif @player.player_on_array_platform(@platform)
         @player.set_up
         @player.jump_up
       end
@@ -89,9 +92,11 @@ class GameWindow < Gosu::Window
       @player.push_object(@crate)
     end
 
-
+    #@king_kong.snapshot(@player.player_pos_x, @player.player_pos_y)
 
     @crate.update
+
+    #@king_kong.update(@player.player_pos_x, @player.player_pos_y)
 
     @player.blocked_object(@crate)
 
@@ -109,9 +114,11 @@ class GameWindow < Gosu::Window
     end
   end
 
+
   def button_down(id)
     close if id == Gosu::KbEscape
   end
+
 
   def draw
 
@@ -125,6 +132,7 @@ class GameWindow < Gosu::Window
       @player.draw
       @crate.draw
       @rock.draw
+      @king_kong.draw
     end
 
   end

@@ -39,6 +39,10 @@ class Player
     @player_y
   end
 
+  def player_width
+    PLAYER_WIDTH
+  end
+
   def move_left
     unless @blocked[:left]
       @direction = :left
@@ -128,24 +132,16 @@ class Player
   end
 
 
-
-
   def player_on_array_platform(object)
-
-    for i in 0...object.length
-      if @player_y  == object[i].get_y - PLAYER_HEIGHT && @player_x >= object[i].get_x &&
-          @player_x <= object[i].get_x + object[i].get_width
-        return true
-      end
-    end
+    object.any? {|element| @player_y  == element.get_y - PLAYER_HEIGHT && @player_x >= element.get_x && @player_x <= element.get_x + element.get_width }
   end
 
 
 
   def on_platform(object)
-    offset_x1 = (PLAYER_WIDTH * 0.7)
-    offset_x2 = (PLAYER_WIDTH * 0.3)
-    if @player_moves.get_x  + offset_x1 >= object.get_x && @player_moves.get_x <= object.get_x + object.get_width - offset_x2 &&
+    offset = (PLAYER_WIDTH * 0.4)
+
+    if @player_x >= object.get_x - offset && @player_x <= object.get_x + object.get_width - offset &&
         @player_y >= object.get_y - PLAYER_HEIGHT && @player_y <= object.get_y - (PLAYER_HEIGHT/ 2)
 
       @player_y = @player_moves.set_y(object.get_y - PLAYER_HEIGHT)
@@ -153,18 +149,19 @@ class Player
       @blocked[:down] = true
       @player_moves.set_velocity_y(0)
 
-      elsif @player_moves.get_x  + offset_x1 >= object.get_x && @player_moves.get_x <= object.get_x + object.get_width - offset_x2 &&
-          @player_y >= 100 && @player_y <= 179
-        @blocked[:up] = false
-        @blocked[:down] = true
+    elsif @player_x >= object.get_x - offset && @player_x <= object.get_x + object.get_width - offset &&
+        (@player_y >= 120 && @player_y <= 199)
+      @blocked[:up] = false
+      @blocked[:down] = true
     end
   end
 
   #next step is to block jump if user is jumping and knocks their head on platform
 
   def platform_blocked(object)
+    offset = (PLAYER_WIDTH * 0.5)
 
-    if @player_x >= object.get_x && @player_x <= object.get_x + object.get_width &&
+    if @player_x >= object.get_x  - offset && @player_x <= object.get_x + object.get_width - offset &&
       @player_y >= object.get_y + (object.get_height/2) && @player_y <= object.get_y + (object.get_height)
 
       puts "#{@player_x}"
