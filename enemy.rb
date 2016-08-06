@@ -9,7 +9,7 @@ class Enemy
   PLATFORM_ONE_Y = -18
   PLATFORM_TWO_Y = 70
 
-  COUNTER = 3
+  COUNTER = 5
 
   def initialize(window, x, y)
     @enemy_x = x
@@ -25,18 +25,38 @@ class Enemy
     @x_direction = :right
     @y_direction = :up
 
-    @moving = false
+    @enemy_moves.reset_timer
+    @hunted_values = []
 
-    @m_time = Time.now
+    #@moving = false
+
+    #@m_time = Time.now
   end
 
 
-  def update(x, y)
-    if Time.now > @m_time + COUNTER
-      @start_enemy_movement = true
-      find_player_object(x, y)
+  def update(x,y)
 
+    #timer has elapsed, find player and reset timer
+    if @enemy_moves.timer_elapsed?(COUNTER)
+      get_hunted_object_position(x, y)
+      @enemy_moves.reset_timer
+    end
 
+    #array is not nil so update enemy position
+    unless @hunted_values.empty? || @hunted_values.nil?
+      offset = 28
+
+      if @enemy_x > @hunted_values[0] && @enemy_moves.get_x > @hunted_values[0] + offset
+        @x_direction = :left
+        @enemy_x -= 5
+      elsif @enemy_x < @hunted_values[0] && @enemy_moves.get_x < @hunted_values[0] - offset
+        @x_direction = :right
+        @enemy_x += 5
+      else
+        @hunted_values = []
+      end
+
+=begin
       if @x_direction == :left
         puts 'move enemy left'
         @enemy_x -= 5
@@ -52,7 +72,12 @@ class Enemy
       elsif @y_direction == :down
         puts 'move enemy down'
       end
+=end
     end
+
+
+
+
 
   end
 
@@ -69,9 +94,13 @@ class Enemy
 
 
 
+  def get_hunted_object_position(x, y)
+    @hunted_values = [x,y]
+  end
+
   def find_player_object(x, y)
 
-      offset = 28
+      #offset = 28
       if @enemy_x > x #&& @enemy_moves.get_x > x + offset
         @x_direction = :left
       elsif @enemy_x < x #&& @enemy_moves.get_x < x - offset
@@ -89,6 +118,7 @@ class Enemy
   end
 
 
+=begin
   def snapshot(x, y)
 
     if Time.now > @m_time + COUNTER
@@ -97,4 +127,5 @@ class Enemy
     end
 
   end
+=end
 end

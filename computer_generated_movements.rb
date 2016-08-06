@@ -44,7 +44,17 @@ class Computer_Generated_Movements
     @delta
   end
 
+  def reset_timer
+    @m_time = Time.now
+  end
+
+  def timer_elapsed?(timer_interval)
+    true if Time.now > @m_time + timer_interval
+  end
 
 
+  def get_time
+    @m_time
+  end
 
 end

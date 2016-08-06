@@ -32,30 +32,34 @@ class GameWindow < Gosu::Window
 
     @platform = Array.new(28)
 
-    for i in 0...@platform.length
+
+    0.upto(@platform.length - 1) do |i|
       @platform[i] = Sprite.new(self, 'assets/wood-block-small.png')
     end
 
     start = 100
     start_y = 120
-    for i in 0...@platform.length
-      @platform[i].set_position(start, start_y)
-      if i == 3 || i == 6 || i == 8 || i == 16 || i == 25
-        start += 102
-      end
 
-      if i == 22
+    @platform.each_with_index do |i, index|
+      i.set_position(start, start_y)
+       if index == 3 || index == 6 || index == 8 || index == 16 || index == 25
+        start += 102
+       end
+
+      if index == 22
         start += 102*2
       end
-      if i == 13
+
+      if index == 13
         start = 50
       else
         start += 102
       end
 
-      if i >= 13 && i < 19
+      if index >= 13 &&  index < 19
         start_y = 280
       end
+
     end
 
     @rock = Sprite.new(self, 'assets/rock 1.png')
@@ -92,16 +96,15 @@ class GameWindow < Gosu::Window
       @player.push_object(@crate)
     end
 
-    #@king_kong.snapshot(@player.player_pos_x, @player.player_pos_y)
 
     @crate.update
 
-    #@king_kong.update(@player.player_pos_x, @player.player_pos_y)
+    @king_kong.update(@player.player_pos_x, @player.player_pos_y)
 
     @player.blocked_object(@crate)
 
-    @platform.each do
-      |i| @player.platform_blocked(i)
+    @platform.each do |i|
+      @player.platform_blocked(i)
       @player.on_platform(i)
     end
 

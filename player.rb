@@ -164,12 +164,6 @@ class Player
     if @player_x >= object.get_x  - offset && @player_x <= object.get_x + object.get_width - offset &&
       @player_y >= object.get_y + (object.get_height/2) && @player_y <= object.get_y + (object.get_height)
 
-      puts "#{@player_x}"
-      puts "#{object.get_x}"
-      puts "#{object.get_x + object.get_width}"
-      puts "#{@player_y}"
-      puts "#{object.get_y + + (object.get_height/2)}"
-      puts "#{object.get_y + object.get_height}"
       @player_moves.down(JUMP_VELOCITY)
     end
   end
