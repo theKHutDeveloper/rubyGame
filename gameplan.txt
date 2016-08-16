@@ -1,0 +1,17 @@
+To do list
+1. add kong movement animation for when enemy chases player
+2. add kong attack animation for when enemy catches player
+3. add banana image, this is what player has to obtain
+4. implement code for enemy moving vertically, enemy has 
+to get to an empty slot on the platform before he can move on to the lower or higher level
+
+
+Future aims of game
+Player has to obtain a set amount of bananas within a set time limit
+
+The bananas can appear on the ground or on the platforms, the bananas are only there for a set number of seconds 
+before they disappear. Note if the bananas appear on the ground the enemy can not follow.
+
+Considering having a bonus time increase, e.g. if player gets bonus image then they get x extra seconds on game.
+
+
